@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ollama-model-manager"
+version = "0.1.0"
+description = "Beginner-friendly CLI to list, pull, delete, and compare Ollama models locally, with a model-card viewer and RAM estimator."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [{name = "Asdale Dynamics, LLC"}]
+keywords = ["ollama", "local-llm", "cli", "ai", "ram-estimator"]
+
+[project.scripts]
+ollama-mm = "ollama_model_manager.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ollama_model_manager*"]
