@@ -1,29 +1,29 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.egg-info/
-*.egg/
-dist/
-build/
-
-# Virtual environments
-venv/
-.env/
-.venv/
 
 # IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
 # OS
+# Python
+# Testing
+# Virtual environments
+*.egg-info/
+*.egg/
+*.pyc
+*.pyd
+*.pyo
+*.swo
+*.swp
 .DS_Store
-Thumbs.db
+.coverage
+.env
+.env.*
+.env/
+.idea/
+.pytest_cache/
+.venv/
+.vscode/
+Thumbs.dbnode_modules/
+__pycache__/
+build/
+dist/
+dist/*.tmp
+htmlcov/
+venv/
