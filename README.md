@@ -1,93 +1,128 @@
 # ollama-model-manager
 
-A beginner-friendly Python CLI to list, pull, delete, and compare Ollama models locally, with a model-card viewer and RAM estimator. No API keys required — talks directly to your local Ollama server.
+A friendly Python command-line tool for managing Ollama models on your own computer.
+List, pull, delete, compare, view model cards, and estimate RAM usage — all local, no
+API keys, no cloud, no fuss.
 
-Built with care by **Asdale Dynamics, LLC**.
-
----
-
-## Features
-
-- **List models** – See every model on your Ollama server with size, parameters, quantization, and digest
-- **Pull models** – Download new models with live progress output
-- **Delete models** – Remove models you no longer need
-- **Model cards** – View detailed model information (family, parameters, template, modelfile)
-- **RAM estimator** – Get a quick estimate of how much RAM a model needs for a given context length
-- **Compare models** – Side-by-side comparison of two models
-- **Zero runtime dependencies** – Uses only the Python standard library
-- **Local-first** – No telemetry, no cloud calls, no secrets
+Made with care by **Asdale Dynamics, LLC**.
 
 ---
 
-## Installation
+## Who this is for
 
-Requires Python 3.8+.
+If you're new to running local AI models and want a simple way to manage them without
+wrestling with complicated commands, this tool is for you. It's built to be clear,
+beginner-friendly, and safe to use on your own machine.
+
+---
+
+## What it does
+
+| Command | What it does |
+|---------|--------------|
+| `list` | Shows every model on your Ollama server, with size, parameters, and format |
+| `pull <model>` | Downloads a new model from Ollama (watches progress for you) |
+| `delete <model>` | Removes a model you no longer need |
+| `show <model>` | Opens the model card: family, size, quantization, prompt template, modelfile |
+| `ram <model>` | Estimates how much RAM a model needs to run |
+| `compare <m1> <m2>` | Puts two models side by side so you can see the differences |
+| `version` | Prints the version number |
+
+---
+
+## Install
+
+You need Python 3.8 or newer.
 
 ```bash
-# From this repository
+# Clone or download this folder, then:
 pip install -e .
+```
 
-# Or run directly without installing
+That installs the `ollama-mm` command. You can also run it without installing:
+
+```bash
 python -m ollama_model_manager --help
 ```
 
-After installing, the `ollama-mm` command is available.
-
 ---
 
-## Quick Start
+## Getting started (step by step)
+
+### 1. Start Ollama
+
+Make sure Ollama is running on your computer:
 
 ```bash
-# Start Ollama if it isn't running
 ollama serve
+```
 
-# List your models
+### 2. See what models you already have
+
+```bash
 ollama-mm list
+```
 
-# Pull a new model
+You'll see a table with each model's name, size, parameter count, quantization, and digest.
+
+### 3. Pull a new model
+
+```bash
 ollama-mm pull llama3.2
+```
 
-# See a model card
+You'll see a progress bar as it downloads. When it's done, you're ready to use it.
+
+### 4. Look at a model card
+
+```bash
 ollama-mm show llama3.2
+```
 
-# Estimate RAM for a 4K context window
+This shows the model's family (like "llama"), parameter size (like "3B"), quantization
+(like "Q4_K_M"), on-disk size, digest, last modified date, prompt template, and modelfile
+if one exists.
+
+### 5. Estimate RAM
+
+```bash
 ollama-mm ram llama3.2
+```
 
-# Estimate RAM for an 8K context window
+This estimates how much RAM your computer needs to run the model, including the model
+weights, a KV-cache estimate for your context window, and a small overhead allowance.
+The default context is 4096 tokens. Change it with `--context-len`:
+
+```bash
 ollama-mm ram llama3.2 --context-len 8192
+```
 
-# Compare two models
+### 6. Compare two models
+
+```bash
 ollama-mm compare llama3.2 phi3:mini
+```
 
-# Delete a model
+You'll see family, parameters, quantization, size, digest, and modified date side by side,
+plus a size difference note.
+
+### 7. Delete a model
+
+```bash
 ollama-mm delete old-model
 ```
 
 ---
 
-## Commands
+## How the RAM estimate works
 
-| Command | Description |
-|---------|-------------|
-| `list` | List all models on the Ollama server |
-| `pull <model>` | Pull a model (streams progress) |
-| `delete <model>` | Delete a model |
-| `show <model>` | View the model card |
-| `ram <model> [--context-len N]` | Estimate RAM needed (default context: 4096) |
-| `compare <model1> <model2>` | Side-by-side comparison |
-| `version` | Print version |
+The RAM estimate is a rough guide, not a guarantee. It adds up three pieces:
 
-All commands accept `--url URL` to point at a different Ollama server (default: `http://localhost:11434`).
-
----
-
-## RAM Estimator – How It Works
-
-The RAM estimate is a **heuristic**, not a guarantee. It breaks down into three parts:
-
-1. **Weights (quantized on disk)** – The model file size as reported by Ollama. Quantized weights in memory are roughly the same size.
-2. **KV cache** – Estimated using: `parameters (billions) × context length × 0.07 MB per token per billion params`. This approximates fp16 K+V cache per token.
-3. **Runtime overhead** – A fixed ~1 GB for the Python/Ollama process and OS headroom.
+1. **Model weights** – The on-disk size Ollama reports. Quantized weights in memory are
+   roughly the same size.
+2. **KV cache** – Estimated using: `parameters (billions) × context length × 0.07 MB per
+   token per billion parameters`. This approximates the fp16 key+value cache per token.
+3. **Runtime overhead** – A fixed ~1 GB for the Ollama process and operating system.
 
 Example output:
 
@@ -100,28 +135,31 @@ RAM estimate for llama3.2
   Estimated total RAM:         3.86 GB (3953 MB)
 ```
 
-*Actual usage varies by quantization, backend, and workload. Measure with your own setup for precision.*
+Your real usage may vary based on quantization, backend, and what else is running. Measure
+with your own setup for precision.
 
 ---
 
-## Testing
+## Running the tests
 
-Tests use a mock Ollama server (no real Ollama needed, no API keys).
+Tests use a mock Ollama server — no real Ollama installation and no API keys needed:
 
 ```bash
-# From the repository root
 python -m pytest tests/ -v
 ```
+
+You should see all 26 tests pass.
 
 ---
 
 ## Credits
 
-Built by **Asdale Dynamics, LLC** — beginner-friendly AI education, books, guides, and practical local-AI tools.
+Built by **Asdale Dynamics, LLC** — beginner-friendly AI education, books, guides, and
+practical local-AI tools.
 
-- Founder: Dylan Asdale (RN turned AI author)
+- Founder: Dylan Asdale (registered nurse turned AI author)
 - Book: *The Massive AI Manual*
-- Hub: <https://dylanasdale.github.io>
+- Hub: https://dylanasdale.github.io
 
 ---
 
